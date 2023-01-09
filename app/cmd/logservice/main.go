@@ -6,6 +6,7 @@ import (
 	stlog "log"
 
 	"github.com/MarouaneBouaricha/grades-portal/app/log"
+	"github.com/MarouaneBouaricha/grades-portal/app/registry"
 	"github.com/MarouaneBouaricha/grades-portal/app/service"
 )
 
@@ -13,10 +14,17 @@ func main() {
 	log.Run("./app.log")
 
 	host, port := "localhost", "5000"
-	ctx, err := service.Start(context.Background(),
-		"Log Service",
+	servicesAddress := fmt.Sprintf("http://%v:%v", host, port)
+
+	var r registry.Registration
+	r.ServiceName = registry.LogService
+	r.ServiceURL = servicesAddress
+
+	ctx, err := service.Start(
+		context.Background(),
 		host,
 		port,
+		r,
 		log.RegisterHandlers,
 	)
 	if err != nil {
